@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="minizip_mem.vcxproj" Id="f05ae53d-23d2-4b9f-adc5-ac95fce6f4b9" />
+</Solution>

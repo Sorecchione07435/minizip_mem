@@ -1,5 +1,6 @@
 #pragma once
 #include "windows.h"
+
 #include "minizip/unzip.h"
 #include "minizip/zip.h"
 
@@ -16,5 +17,4 @@ typedef struct
 extern unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memFileStruct, const void* data, size_t len);
 
 #endif
-
 

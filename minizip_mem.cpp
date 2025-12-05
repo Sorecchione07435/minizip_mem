@@ -1,4 +1,4 @@
-#include "windows.h"*
+#include "windows.h"
 #include "minizip_mem.h"
 
 voidpf ZCALLBACK ZipOpen(voidpf opaque, LPCSTR fileName, int mode)
@@ -17,7 +17,7 @@ uLong ZCALLBACK ZipRead(voidpf opaque, voidpf stream, void* buf, uLong size)
 		size = p->size - p->pos;
 	}
 
-	memcpy(buf, (const unsigned char*)p->data + p->pos, size);
+	memcpy(buf, (unsigned char*)p->data + p->pos, size);
 
 	p->pos += size;
 
@@ -33,8 +33,8 @@ uLong ZCALLBACK ZipWrite(voidpf opaque, voidpf stream, const void* buf, uLong si
 		return 0;
 	}
 
-	const void* dest = (const unsigned char*)p->data + p->pos;
-	memcpy((void*)dest, buf, size);
+	void* dest = (unsigned char*)p->data + p->pos;
+	memcpy(dest, buf, size);
 
 	p->pos += size;
 
@@ -98,7 +98,7 @@ void fill_memory_file_func(zlib_filefunc_def* pzlib_filefunc_def, voidpf opaque)
 	pzlib_filefunc_def->opaque = opaque;
 }
 
-unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memFileStruct, const void* data, size_t len)
+unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memFileStruct, void* data, size_t len)
 {
 	zlib_filefunc_def memFunc;
 

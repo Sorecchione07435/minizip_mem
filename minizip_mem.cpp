@@ -98,11 +98,11 @@ void fill_memory_file_func(zlib_filefunc_def* pzlib_filefunc_def, voidpf opaque)
 	pzlib_filefunc_def->opaque = opaque;
 }
 
-unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memFileStruct, void* data, size_t len)
+unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memFileStruct, const void* data, size_t len)
 {
 	zlib_filefunc_def memFunc;
 
-	memFileStruct.data = data;
+	memFileStruct.data = (void*)data;
 	memFileStruct.size = len;
 	memFileStruct.pos = 0;
 

@@ -7,7 +7,7 @@
 
 typedef struct
 {
-	const void* data;
+	void* data;
 	size_t size;
 	size_t pos;
 
@@ -16,4 +16,5 @@ typedef struct
 extern unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memFileStruct, const void* data, size_t len);
 
 #endif
+
 

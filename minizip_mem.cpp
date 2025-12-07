@@ -3,44 +3,44 @@
 
 voidpf ZCALLBACK ZipOpen(voidpf opaque, LPCSTR fileName, int mode)
 {
-	ZipMemoryStreamFile* p = (ZipMemoryStreamFile*)opaque;
-	p->pos = 0;
-	return p;
+	ZipMemoryStreamFile* mf = (ZipMemoryStreamFile*)opaque;
+	mf->pos = 0;
+	return mf;
 }
 
 uLong ZCALLBACK ZipRead(voidpf opaque, voidpf stream, void* buf, uLong size)
 {
-	ZipMemoryStreamFile* p = (ZipMemoryStreamFile*)stream;
+	ZipMemoryStreamFile* mf = (ZipMemoryStreamFile*)stream;
 
-	if (p->pos + size > p->size)
+	if (mf->pos + size > mf->size)
 	{
-		size = p->size - p->pos;
+		size = mf->size - mf->pos;
 	}
 
-	memcpy(buf, (unsigned char*)p->data + p->pos, size);
+	memcpy(buf, (unsigned char*)mf->data + mf->pos, size);
 
-	p->pos += size;
+	mf->pos += size;
 
 	return size;
 }
 
 uLong ZCALLBACK ZipWrite(voidpf opaque, voidpf stream, const void* buf, uLong size)
 {
-	ZipMemoryStreamFile* p = (ZipMemoryStreamFile*)stream;
+	ZipMemoryStreamFile* mf = (ZipMemoryStreamFile*)stream;
 
-	if (p->pos + size > p->size)
+	if (mf->pos + size > mf->size)
 	{
 		return 0;
 	}
 
-	void* dest = (unsigned char*)p->data + p->pos;
+	void* dest = (unsigned char*)mf->data + mf->pos;
 	memcpy(dest, buf, size);
 
-	p->pos += size;
+	mf->pos += size;
 
-	if (p->pos > p->size)
+	if (mf->pos > mf->size)
 	{
-		p->size = p->pos;
+		mf->size = mf->pos;
 	}
 
 	return size;
@@ -48,31 +48,31 @@ uLong ZCALLBACK ZipWrite(voidpf opaque, voidpf stream, const void* buf, uLong si
 
 long ZCALLBACK ZipTell(voidpf opaque, voidpf stream)
 {
-	ZipMemoryStreamFile* p = (ZipMemoryStreamFile*)stream;
+	ZipMemoryStreamFile* mf = (ZipMemoryStreamFile*)stream;
 
-	return (long)p->pos;
+	return (long)mf->pos;
 }
 
 long ZCALLBACK ZipSeek(voidpf opaque, voidpf stream, uLong offset, int origin)
 {
-	ZipMemoryStreamFile* p = (ZipMemoryStreamFile*)stream;
+	ZipMemoryStreamFile* mf = (ZipMemoryStreamFile*)stream;
 
 	size_t new_pos = 0;
 
 	switch (origin)
 	{
 	case SEEK_SET: new_pos = offset; break;
-	case SEEK_CUR: new_pos = p->pos + offset; break;
-	case SEEK_END: new_pos = p->size + offset; break;
+	case SEEK_CUR: new_pos = mf->pos + offset; break;
+	case SEEK_END: new_pos = mf->size + offset; break;
 	default: return -1;
 	}
 
-	if (new_pos > p->size)
+	if (new_pos > mf->size)
 	{
 		return -1;
 	}
 
-	p->pos = new_pos;
+	mf->pos = new_pos;
 	return 0;
 }
 

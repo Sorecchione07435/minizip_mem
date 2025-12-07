@@ -26,14 +26,14 @@ This is ideal for applications that need high-performance, diskless extraction, 
 3.  Define the following preprocessor constant to enable memory support:
     
 
-```c
+```cpp
 #define _MINIZIP_MEM_SUPPORT
 
 ```
 
 ## Usage Example
 
-```c
+```cpp
 #include "windows.h"
 
 #include "minizip/unzip.h"
@@ -41,7 +41,7 @@ This is ideal for applications that need high-performance, diskless extraction, 
 
 #include "minizip_mem.h" // <-- minizip_mem header
 
-bool ExtractFromMem(const BYTE* archiveData, size_t archiveSize)
+bool ReadZipFromMemory(const BYTE* archiveData, size_t archiveSize)
 {
     // Initialize memory stream structure
     ZipMemoryStreamFile memFileStream = {};

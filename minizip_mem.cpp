@@ -64,6 +64,7 @@ long ZCALLBACK ZipSeek(voidpf opaque, voidpf stream, uLong offset, int origin)
 		case SEEK_SET: new_pos = offset; break;
 		case SEEK_CUR: new_pos = mf->pos + offset; break;
 		case SEEK_END: new_pos = mf->size + offset; break;
+		
 		default: return -1;
 	}
 
@@ -111,4 +112,5 @@ unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memFileStruct, const void* data, 
 	unzFile unzMemFile = unzOpen2("file.zip", &memFunc);
 	return unzMemFile;
 }
+
 

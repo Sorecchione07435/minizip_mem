@@ -87,7 +87,7 @@ int ZCALLBACK ZipError(voidpf opaque, voidpf stream)
 	return 0;
 }
 
-void fill_memory_file_func(zlib_filefunc_def* pzlib_filefunc_def, voidpf opaque)
+void fill_memory_file_funcs(zlib_filefunc_def* pzlib_filefunc_def, voidpf opaque)
 {
 	pzlib_filefunc_def->zopen_file = ZipOpen;
 	pzlib_filefunc_def->zread_file = ZipRead;
@@ -107,7 +107,8 @@ unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memoryFile, const void* data, siz
 	memoryFile.size = len;
 	memoryFile.pos = 0;
 
-	fill_memory_file_func(&memFuncs, &memoryFile);
+	fill_memory_file_funcs(&memFuncs, &memoryFile);
 
 	return unzOpen2("file.zip", &memFuncs);
 }
+

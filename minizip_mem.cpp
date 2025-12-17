@@ -111,6 +111,3 @@ unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memoryFile, const void* data, siz
 
 	return unzOpen2("file.zip", &memFuncs);
 }
-
-
-

@@ -1,7 +1,7 @@
 
 # minizip_mem
 
-`minizip_mem` is a small static library for old minizip that adds support for extracting ZIP files directly into memory, bypassing the file system.
+**minizip_mem** is a small static library for old minizip that adds support for extracting ZIP files directly into memory, bypassing the file system.
 
 This is ideal for applications that need high-performance, diskless extraction, or embedding archives in executables.
 

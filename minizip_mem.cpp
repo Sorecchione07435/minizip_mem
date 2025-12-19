@@ -33,8 +33,7 @@ uLong ZCALLBACK ZipWrite(voidpf opaque, voidpf stream, const void* buf, uLong si
 		return 0;
 	}
 
-	void* dest = (unsigned char*)mf->data + mf->pos;
-	memcpy(dest, buf, size);
+	memcpy((unsigned char*)mf->data + mf->pos, buf, size);
 
 	mf->pos += size;
 
@@ -111,5 +110,6 @@ unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memoryStreamFile, const void* dat
 
 	return unzOpen2("file.zip", &memFuncs);
 }
+
 
 

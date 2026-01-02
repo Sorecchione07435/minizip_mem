@@ -1,4 +1,3 @@
-#include "windows.h"
 #include "minizip_mem.h"
 
 voidpf ZCALLBACK ZipOpen(voidpf opaque, LPCSTR, int)
@@ -104,3 +103,4 @@ unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memoryStreamFile, const void* dat
 
 	return unzOpen2("file.zip", &memFuncs);
 }
+

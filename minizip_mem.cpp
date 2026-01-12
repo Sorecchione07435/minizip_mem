@@ -64,7 +64,7 @@ long ZCALLBACK ZipSeek(voidpf opaque, voidpf stream, uLong offset, int origin)
 
 uLong ZCALLBACK ZipWrite(voidpf opaque, voidpf stream, const void* buf, uLong size)
 {
-	return 0;
+	return (uLong)-1;
 }
 
 int ZCALLBACK ZipClose(voidpf opaque, voidpf stream)
@@ -103,4 +103,5 @@ unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memoryStreamFile, const void* dat
 
 	return unzOpen2("file.zip", &memFuncs);
 }
+
 

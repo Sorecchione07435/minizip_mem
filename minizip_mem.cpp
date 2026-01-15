@@ -101,12 +101,13 @@ unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memoryStreamFile, const void* dat
 
 	fill_memory_file_funcs(&memFuncs, &memoryStreamFile);
 
-	unzFile memFile = unzOpen2("file.zip", &memFuncs);
+	unzFile unzMemFile = unzOpen2("file.zip", &memFuncs);
 
-	if (!memFile)
+	if (!unzMemFile)
 	{
 		return nullptr;
 	}
 
-	return memFile;
+	return unzMemFile;
 }
+

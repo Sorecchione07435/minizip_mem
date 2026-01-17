@@ -46,7 +46,7 @@ bool ReadZipFromMemory(const BYTE* archiveData, size_t archiveSize)
     // Initialize memory stream structure
     ZipMemoryStreamFile memFileStream = {};
 
-    // Open the ZIP archive directly from memory
+    // Open the ZIP archive directly from a memory buffer
     unzFile memZipFile = unzOpenMemoryFile(memFileStream, archiveData, archiveSize);
     if (!memZipFile)
     {

@@ -95,7 +95,7 @@ unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memoryStreamFile, const void* dat
 
 	zlib_filefunc_def memFuncs = {};
 
-	memoryStreamFile.data = data;
+	memoryStreamFile.data = (void*)data;
 	memoryStreamFile.size = len;
 	memoryStreamFile.pos = 0;
 
@@ -110,4 +110,5 @@ unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memoryStreamFile, const void* dat
 
 	return unzMemFile;
 }
+
 

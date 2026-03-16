@@ -14,7 +14,7 @@ typedef struct
 
 } ZipMemoryStreamFile;
 
-extern unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memFileStruct, const void* data, size_t len);
+extern ZEXPORT unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memFileStruct, const void* data, size_t len);
 
 #endif
 

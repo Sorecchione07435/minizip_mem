@@ -1,114 +1,108 @@
 #include "minizip_mem.h"
 
-voidpf ZCALLBACK ZipOpen(voidpf opaque, LPCSTR, int)
+voidpf ZCALLBACK ZipOpen(voidpf opaque, const char*, int)
 {
-	if (!opaque) return 0;
+    if (!opaque) return nullptr;
 
-	auto* mf = (ZipMemoryStreamFile*)opaque;
+    auto* mf = static_cast<ZipMemoryStreamFile*>(opaque);
+    mf->pos = 0;
 
-	mf->pos = 0;
-	return mf;
+    return mf;
 }
 
-uLong ZCALLBACK ZipRead(voidpf opaque, voidpf stream, void* buf, uLong size)
+uLong ZCALLBACK ZipRead(voidpf, voidpf stream, void* buf, uLong size)
 {
-	if (!stream || !buf || size == 0) return 0;
-	
-	auto* mf = (ZipMemoryStreamFile*)stream;
+    if (!stream || !buf || size == 0) return 0;
 
-	if (mf->pos + size > mf->size)
-	{
-		size = mf->size - mf->pos;
-	}
+    auto* mf = static_cast<ZipMemoryStreamFile*>(stream);
 
-	memcpy(buf, (unsigned char*)mf->data + mf->pos, size);
+    size_t remain = mf->size - mf->pos;
 
-	mf->pos += size;
+    if (size > remain) size = static_cast<uLong>(remain);
 
-	return size;
+    memcpy(buf, (unsigned char*)mf->data + mf->pos, size);
+
+    mf->pos += size;
+
+    return size;
 }
 
-long ZCALLBACK ZipTell(voidpf opaque, voidpf stream)
+long ZCALLBACK ZipTell(voidpf, voidpf stream)
 {
-	if (!stream) return -1;
+    if (!stream) return -1;
 
-	auto* mf = (ZipMemoryStreamFile*)stream;
-	return (long)mf->pos;
+    auto* mf = static_cast<ZipMemoryStreamFile*>(stream);
+
+    return static_cast<long>(mf->pos);
 }
 
-long ZCALLBACK ZipSeek(voidpf opaque, voidpf stream, uLong offset, int origin)
+long ZCALLBACK ZipSeek(voidpf, voidpf stream, uLong offset, int origin)
 {
-	if (!stream) return -1;
+    if (!stream) return -1;
+    auto* mf = static_cast<ZipMemoryStreamFile*>(stream);
 
-	auto* mf = (ZipMemoryStreamFile*)stream;
+    long new_pos = 0;
 
-	size_t new_pos = 0;
+    switch (origin)
+    {
+        case SEEK_SET: new_pos = static_cast<long>(offset); break;
+        case SEEK_CUR: new_pos = static_cast<long>(mf->pos) + static_cast<long>(offset); break;
+        case SEEK_END: new_pos = static_cast<long>(mf->size) + static_cast<long>(offset); break;
+        default: return -1;
+    }
 
-	switch (origin)
-	{
-		case SEEK_SET: new_pos = offset; break;
-		case SEEK_CUR: new_pos = mf->pos + offset; break;
-		case SEEK_END: new_pos = mf->size + offset; break;
+    if (new_pos < 0 || new_pos > static_cast<long>(mf->size))
+        return -1;
 
-		default: return -1;
-	}
-
-	if (new_pos > mf->size)
-	{
-		return -1;
-	}
-
-	mf->pos = new_pos;
-	return 0;
+    mf->pos = static_cast<size_t>(new_pos);
+    return 0;
 }
 
-uLong ZCALLBACK ZipWrite(voidpf opaque, voidpf stream, const void* buf, uLong size)
+uLong ZCALLBACK ZipWrite(voidpf, voidpf, const void*, uLong)
 {
-	return (uLong)-1;
+    return static_cast<uLong>(-1);
 }
 
-int ZCALLBACK ZipClose(voidpf opaque, voidpf stream)
+int ZCALLBACK ZipClose(voidpf, voidpf)
 {
-	return 0;
+    return 0;
 }
 
-int ZCALLBACK ZipError(voidpf opaque, voidpf stream)
+int ZCALLBACK ZipError(voidpf, voidpf)
 {
-	return 0;
+    return 0;
 }
 
-void fill_memory_file_funcs(zlib_filefunc_def* pzlib_filefunc_def, voidpf opaque)
+inline void fill_memory_file_funcs(zlib_filefunc_def* funcs, voidpf opaque)
 {
-	pzlib_filefunc_def->zopen_file = ZipOpen;
-	pzlib_filefunc_def->zread_file = ZipRead;
-	pzlib_filefunc_def->ztell_file = ZipTell;
-	pzlib_filefunc_def->zseek_file = ZipSeek;
-	pzlib_filefunc_def->zwrite_file = ZipWrite;
-	pzlib_filefunc_def->zclose_file = ZipClose;
-	pzlib_filefunc_def->zerror_file = ZipError;
-	pzlib_filefunc_def->opaque = opaque;
+    funcs->zopen_file = ZipOpen;
+    funcs->zread_file = ZipRead;
+    funcs->ztell_file = ZipTell;
+    funcs->zseek_file = ZipSeek;
+    funcs->zwrite_file = ZipWrite;
+    funcs->zclose_file = ZipClose;
+    funcs->zerror_file = ZipError;
+    funcs->opaque = opaque;
 }
 
-unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memoryStreamFile, const void* data, size_t len)
+inline unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memStream, const void* data, size_t len)
 {
-	if (!data || len == 0) return nullptr;
+    if (!data || len == 0) return nullptr;
 
-	zlib_filefunc_def memFuncs = {};
+    memStream.data = static_cast<const unsigned char*>(data);
+    memStream.size = len;
+    memStream.pos = 0;
 
-	memoryStreamFile.data = (void*)data;
-	memoryStreamFile.size = len;
-	memoryStreamFile.pos = 0;
+    zlib_filefunc_def memFuncs{};
 
-	fill_memory_file_funcs(&memFuncs, &memoryStreamFile);
+    fill_memory_file_funcs(&memFuncs, &memStream);
 
-	unzFile unzMemFile = unzOpen2("file.zip", &memFuncs);
+    unzFile uf = unzOpen2(nullptr, &memFuncs);
 
-	if (!unzMemFile)
-	{
-		return nullptr;
-	}
+    if (!uf)
+    {
+        return nullptr;
+    }
 
-	return unzMemFile;
+    return uf;
 }
-
-

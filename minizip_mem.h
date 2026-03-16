@@ -2,7 +2,6 @@
 #include "windows.h"
 
 #include "minizip/unzip.h"
-#include "minizip/zip.h"
 
 #ifdef _MINIZIP_MEM_SUPPORT
 

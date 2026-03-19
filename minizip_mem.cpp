@@ -18,7 +18,10 @@ uLong ZCALLBACK ZipRead(voidpf, voidpf stream, void* buf, uLong size)
 
     size_t remain = mf->size - mf->pos;
 
-    if (size > remain) size = static_cast<uLong>(remain);
+    if (size > remain) 
+    {
+        size = static_cast<uLong>(remain);
+    }  
 
     memcpy(buf, (unsigned char*)mf->data + mf->pos, size);
 
@@ -89,11 +92,11 @@ inline unzFile unzOpenMemoryFile(ZipMemoryStreamFile& memStream, const void* dat
 {
     if (!data || len == 0) return nullptr;
 
+    zlib_filefunc_def memFuncs{};
+    
     memStream.data = static_cast<const unsigned char*>(data);
     memStream.size = len;
     memStream.pos = 0;
-
-    zlib_filefunc_def memFuncs{};
 
     fill_memory_file_funcs(&memFuncs, &memStream);
 
